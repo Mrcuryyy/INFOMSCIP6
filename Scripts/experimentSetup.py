@@ -54,10 +54,14 @@ class ExperimentSetup():
                 else: colors.append(1)
         return np.array(points), colors
 
+    # returns if a point is inside the traingle t
     def inside_Triangle(self, px, py):
-        # calculation of barycentric coordinates i got from stack overflow lol (could be optimized but i doubt that will be necessary)
-        s = 1/(2*self.T_AREA)*(self.T_P0[1]*self.T_P2[0] - self.T_P0[0]*self.T_P2[1] + (self.T_P2[1] - self.T_P0[1])*px + (self.T_P0[0] - self.T_P2[0])*py)
-        t = 1/(2*self.T_AREA)*(self.T_P0[0]*self.T_P1[1] - self.T_P0[1]*self.T_P1[0] + (self.T_P0[1] - self.T_P1[1])*px + (self.T_P1[0] - self.T_P0[0])*py)
+        # calculation of barycentric coordinates i got from stack overflow lol 
+        #s = 1/(2*self.T_AREA)*(self.T_P0[1]*self.T_P2[0] - self.T_P0[0]*self.T_P2[1] + (self.T_P2[1] - self.T_P0[1])*px + (self.T_P0[0] - self.T_P2[0])*py)
+        #t = 1/(2*self.T_AREA)*(self.T_P0[0]*self.T_P1[1] - self.T_P0[1]*self.T_P1[0] + (self.T_P0[1] - self.T_P1[1])*px + (self.T_P1[0] - self.T_P0[0])*py)
+
+        s = 1/(16)*((4)*px + (-4)*py)
+        t = 1/(16)*(-12 + 4*py)
 
         return s >= 0 and t >=0 and 1-s-t >= 0
 
@@ -83,24 +87,12 @@ class ExperimentSetup():
             new_points.append([x, y])
             new_colors.append(c)
 
-        new_set = np.array(new_points), new_colors
-        #self.show_plot(new_set)
+        #self.show_plot((np.array(new_points), new_colors))
         return counter_mis
 
-
+    # simple function to show the plots for debugging purposes
     def show_plot(self, set):
         points, colors = set
         plt.scatter(points[:,0], points[:,1], c = colors)
         plt.show()
-
-
-es = ExperimentSetup()
-'''
-set = es.generate_set(1000, 0)
-missclassified = es.test_knn(set, 7)
-print(missclassified)
-'''
-
-
-print(es.repeat_experiment(repeats=30))
 
