@@ -26,10 +26,9 @@ class ExperimentSetup():
         start = time.time()
         print(f"starting experiments with n={n} and f={f}...")
         results = []
-        for i in range(repeats):
+        for _ in range(repeats):
             set = self.generate_set(n, f)
-            knn_set = self.determine_knn(set)
-            results.append(self.nr_misclassified(set, knn_set))
+            results.append(self.test_knn(set))
 
         end = time.time()
         print(f"Finished {repeats} repeats of the experiment in {round(((end-start)) / 60, 2) } minutes")
@@ -47,12 +46,12 @@ class ExperimentSetup():
 
             if self.inside_Triangle(x, y):
                 if not outlier: 
-                    colors.append(0)
-                else: colors.append(1)
-            else:
-                if not outlier: 
                     colors.append(1)
                 else: colors.append(0)
+            else:
+                if not outlier: 
+                    colors.append(0)
+                else: colors.append(1)
         return np.array(points), colors
 
     def inside_Triangle(self, px, py):
@@ -62,39 +61,32 @@ class ExperimentSetup():
 
         return s >= 0 and t >=0 and 1-s-t >= 0
 
+
     # returns set with colors determined by knn
-    def determine_knn(self, set, k=7):
+    def test_knn(self, set, k=7, test_amount = 10000):
         points, colors = set
-        knn = KNeighborsClassifier(n_neighbors=k+1)
-        knn_colors = []
+        knn = KNeighborsClassifier(n_neighbors=k)
+        knn.fit(points, colors)
+        counter_mis = 0
 
-        # probably not the most elegant way to do this, but knn library is very specific in how it works
-        for point in points:
-            knn.fit(points, colors)
-            _, nbs_indices = knn.kneighbors([point])
-            nb_color = 0
-            # find how many are colored in og set
-            for i in range(1, k+1):
-                nb_color += colors[nbs_indices[0,i]]
-            # color based on color of most neighbours
-            if nb_color > k/2:
-                knn_colors.append(1)
-            else: 
-                knn_colors.append(0)
+        new_points = []
+        new_colors = []
+        for i in range(test_amount):
+            x = random.uniform(0, self.Q_SIZE)
+            y = random.uniform(0, self.Q_SIZE)
+            color = knn.predict([(x, y)])
+            c = color[0]
+            in_t = self.inside_Triangle(x, y) #ground truth
+            if (in_t and c == 0) or (not in_t and c ==1) :
+                counter_mis += 1
 
-        return points, knn_colors
+            new_points.append([x, y])
+            new_colors.append(c)
 
-    # returns how many 
-    def nr_misclassified(self, set, knn_set):
-        amount = 0
-        # the points are gonna be the same so we only need to look at the colors
-        _, colors = set
-        _, colors_knn = knn_set
-        for i in range(len(colors)):
-            if colors[i] is colors_knn[i]:
-                continue
-            else: amount += 1
-        return amount
+        new_set = np.array(new_points), new_colors
+        #self.show_plot(new_set)
+        return counter_mis
+
 
     def show_plot(self, set):
         points, colors = set
@@ -105,9 +97,10 @@ class ExperimentSetup():
 es = ExperimentSetup()
 '''
 set = es.generate_set(1000, 0)
-set_knn = es.determine_knn(set, 7)
-es.show_plot(set_knn)
-print(es.nr_misclassified(set, set_knn))
+missclassified = es.test_knn(set, 7)
+print(missclassified)
 '''
 
-print(es.repeat_experiment())
+
+print(es.repeat_experiment(repeats=30))
+
