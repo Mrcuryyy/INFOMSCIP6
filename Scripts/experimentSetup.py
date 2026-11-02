@@ -84,11 +84,11 @@ class ExperimentSetup:
         # Check all points against the triangle at once
         s = 1 / 16 * (4 * test_points[:, 0] - 4 * test_points[:, 1])
         t = 1 / 16 * (-12 + 4 * test_points[:, 1])
-        is_inside_triangle = (s >= 0) & (t >= 0) & (1 - s - t >= 0)
+        triangle_prediction = (s >= 0) & (t >= 0) & (1 - s - t >= 0)
 
-        predictions = knn.predict(test_points)
+        knn_prediction = knn.predict(test_points)
 
-        missclasifications_count = int(np.sum(predictions != is_inside_triangle))
+        missclasifications_count = int(np.sum(knn_prediction != triangle_prediction))
         return missclasifications_count
 
     # simple function to show the plots for debugging purposes
