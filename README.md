@@ -1,1 +1,16 @@
-<img width="735" height="359" alt="image" src="https://github.com/user-attachments/assets/641e7a24-4a82-4e87-bf09-296c19df183a" />
+# Scientific Perspectives Assignment 6
+
+## Setup
+
+### Windows
+- Install python
+- Create your virtual environment ```py -m venv .venv```
+- Activate your virtual environment ```.\.venv\Scripts\Activate.ps1```
+- Download the libraries ```python -m pip install -r requirements.txt```
+
+## Libraries
+
+### Adding Libraries
+If you add a new library do  
+```py -m pip freeze > requirements.txt```  
+So others can install the library too
