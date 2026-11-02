@@ -36,7 +36,7 @@ for n in n_values:
     standard_deviations_errors.append(standard_deviation_error)
 
 
-# 4. Print table ready for LaTeX
+# Print table ready for LaTeX
 print("\n--- LaTeX Table ---")
 print(r"\begin{table}[htb]")
 print(r"\centering")
@@ -52,7 +52,7 @@ print(
 )
 print(r"\label{tab:exp1}")
 print(r"\end{table}")
-# 5. Plot the figure required for Section 3.1
+# Plot the figure required for Section 3.1
 plt.figure(figsize=(8, 5))
 plt.errorbar(
     n_values,
