@@ -14,3 +14,9 @@
 If you add a new library do  
 ```py -m pip freeze > requirements.txt```  
 So others can install the library too
+
+## Scripts
+
+### experiment1.py
+
+To run from root folder : ```python ./Scripts/experiment1.py```
