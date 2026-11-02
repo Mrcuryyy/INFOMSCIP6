@@ -77,24 +77,19 @@ class ExperimentSetup:
         points, colors = set
         knn = KNeighborsClassifier(n_neighbors=k)
         knn.fit(points, colors)
-        counter_mis = 0
 
-        new_points = []
-        new_colors = []
-        for i in range(test_amount):
-            x = random.uniform(0, self.Q_SIZE)
-            y = random.uniform(0, self.Q_SIZE)
-            color = knn.predict([(x, y)])  # type: ignore
-            c = color[0]
-            in_t = self.inside_Triangle(x, y)  # ground truth
-            if (in_t and c == 0) or (not in_t and c == 1):
-                counter_mis += 1
+        # Generate all points at once
+        test_points = np.random.uniform(0, self.Q_SIZE, size=(test_amount, 2))
 
-            new_points.append([x, y])
-            new_colors.append(c)
+        # Check all points against the triangle at once
+        s = 1 / 16 * (4 * test_points[:, 0] - 4 * test_points[:, 1])
+        t = 1 / 16 * (-12 + 4 * test_points[:, 1])
+        is_inside_triangle = (s >= 0) & (t >= 0) & (1 - s - t >= 0)
 
-        # self.show_plot((np.array(new_points), new_colors))
-        return counter_mis
+        predictions = knn.predict(test_points)
+
+        missclasifications_count = int(np.sum(predictions != is_inside_triangle))
+        return missclasifications_count
 
     # simple function to show the plots for debugging purposes
     def show_plot(self, set):
