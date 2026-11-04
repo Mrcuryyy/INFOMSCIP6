@@ -55,8 +55,8 @@ plt.xticks(x)
 plt.grid(True, linestyle="--", alpha=0.7)
 plt.tight_layout()
 # Save the figure to be included in LaTeX
-plt.savefig("experiment2_plot.png", dpi=300)
-print("\nPlot saved as experiment2_plot.png")
+plt.savefig("experiment2_plot.pdf", dpi=300)
+print("\nPlot saved as experiment2_plot.pdf")
 plt.show()
 
 #es.show_plot(set)
