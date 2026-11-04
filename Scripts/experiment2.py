@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from experimentSetup import ExperimentSetup
 
-array = [[], [], [], [], [], [], []]
+array = [[] for _ in range(7)]
 es = ExperimentSetup()
 
 for i in range(7):
