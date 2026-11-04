@@ -61,7 +61,28 @@ class ExperimentSetup:
                     colors.append(1)
         return np.array(points), colors
 
-    # returns if a point is inside the traingle t
+    def generate_set_ex3(self, n_inliers, n_outliers, f):
+        points = []
+        colors = []
+        inliers = 0
+        outliers = 0
+        while inliers + outliers < n_inliers + n_outliers:
+            x = random.uniform(0, self.Q_SIZE)
+            y = random.uniform(0, self.Q_SIZE)
+            outlier = random.uniform(0, 1) < f
+
+            inside_triangle = self.inside_Triangle(x, y)
+            if inside_triangle and inliers < n_inliers:
+                points.append([x, y])
+                colors.append(int(not outlier))
+                inliers += 1
+            elif not inside_triangle and outliers < n_outliers:
+                points.append([x, y])
+                colors.append(int(outlier))
+                outliers += 1
+        return np.array(points), colors
+
+    # returns if a point is inside the triangle t
     def inside_Triangle(self, px, py):
         # calculation of barycentric coordinates i got from stack overflow lol
         # s = 1/(2*self.T_AREA)*(self.T_P0[1]*self.T_P2[0] - self.T_P0[0]*self.T_P2[1] + (self.T_P2[1] - self.T_P0[1])*px + (self.T_P0[0] - self.T_P2[0])*py)
