@@ -35,7 +35,7 @@ class ExperimentSetup:
 
         end = time.time()
         print(
-            f"Finished {repeats} repeats of the experiment in {round(((end-start)) / 60, 2) } minutes"
+            f"Finished {repeats} repeats of the experiment in {round(((end - start)) / 60, 2)} minutes"
         )
         return results
 
@@ -109,8 +109,31 @@ class ExperimentSetup:
 
         predictions = knn.predict(test_points)
 
-        missclasifications_count = int(np.sum(predictions != is_inside_triangle))
-        return missclasifications_count
+        misclassifications_count = int(np.sum(predictions != is_inside_triangle))
+        return misclassifications_count
+
+    def test_knn_ex3(self, set, k=7, test_amount=10000):
+        points, colors = set
+        knn = KNeighborsClassifier(n_neighbors=k)
+        knn.fit(points, colors)
+
+        # Generate all points at once
+        test_points = np.random.uniform(0, self.Q_SIZE, size=(test_amount, 2))
+
+        # Check all points against the triangle at once
+        s = 1 / 16 * (4 * test_points[:, 0] - 4 * test_points[:, 1])
+        t = 1 / 16 * (-12 + 4 * test_points[:, 1])
+        is_inside_triangle = (s >= 0) & (t >= 0) & (1 - s - t >= 0)
+
+        predictions = knn.predict(test_points)
+
+        is_red_classified_blue = 0
+        is_blue_classified_red = 0
+        for y, y_hat in zip(is_inside_triangle, predictions):
+            is_red_classified_blue += 1 if (not y and y_hat) else 0
+            is_blue_classified_red += 1 if (y and not y_hat) else 0
+
+        return is_blue_classified_red, is_red_classified_blue
 
     # simple function to show the plots for debugging purposes
     def show_plot(self, set):
